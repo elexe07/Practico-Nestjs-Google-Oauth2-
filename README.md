@@ -35,6 +35,7 @@ npm run start:dev
 - `GET http://localhost:3000/` : Muestra un resumen de la API.
 - `GET http://localhost:3000/auth/google` : Inicia el flujo de OAuth con Google (entra acá desde el navegador).
 - `GET http://localhost:3000/auth/google/redirect` : El callback que usa Google internamente.
+- `GET http://localhost:3000/auth/profile` : Ruta protegida. Necesitas pasarle el token JWT en el header `Authorization: Bearer <token>`.
 
 ## Notas sobre la implementación
 
