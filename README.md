@@ -40,15 +40,15 @@ npm run start:dev
 - `POST http://localhost:3000/auth/login` : Login con email y contraseña, devuelve JWT y datos de usuario.
 
 ### Ejemplo de prueba para los endpoint POST de registro y login en la terminal (Invoke-WebRequest)
-
-# 1️⃣ Registro
+(Copiar y pegar en la terminal)
+# Registro
 ```
 Invoke-WebRequest -Uri http://localhost:3000/auth/register `
                   -Method POST `
                   -Headers @{ "Content-Type" = "application/json" } `
                   -Body '{ "email":"juan@example.com","password":"Secret123","firstName":"Juan","lastName":"Pérez" }'
 ```
-# 2️⃣ Login
+# Login
 ```
 Invoke-WebRequest -Uri http://localhost:3000/auth/login `
                   -Method POST `
