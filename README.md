@@ -41,6 +41,7 @@ npm run start:dev
 
 ### Ejemplo de prueba para los endpoint POST de registro y login en la terminal (Invoke-WebRequest)
 
+```powershell
 # 1️⃣ Registro
 Invoke-WebRequest -Uri http://localhost:3000/auth/register `
                   -Method POST `
@@ -52,6 +53,7 @@ Invoke-WebRequest -Uri http://localhost:3000/auth/login `
                   -Method POST `
                   -Headers @{ "Content-Type" = "application/json" } `
                   -Body '{ "email":"juan@example.com","password":"Secret123" }'
+```
 
 ## Notas sobre la implementación
 
