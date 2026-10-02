@@ -1,7 +1,9 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService, CreateGoogleUserDto } from '../users/users.service.js';
 import { User } from '../users/entities/user.entity.js';
+import { CreateUserDto } from './dto/create-user.dto.js';
+import { LoginUserDto } from './dto/login-user.dto.js';
 
 export interface GoogleProfileDto extends CreateGoogleUserDto {
   accessToken?: string;
@@ -59,5 +61,22 @@ export class AuthService {
   async generateJwt(user: Pick<User, 'id' | 'email'>): Promise<string> {
     const payload = { sub: user.id, email: user.email };
     return this.jwtService.signAsync(payload);
+  }
+
+  // New registration method
+  async register(dto: CreateUserDto): Promise<{ user: User; token: string }> {
+    const user = await this.usersService.register(dto);
+    const token = await this.generateJwt(user);
+    return { user, token };
+  }
+
+  // New login method
+  async login(dto: LoginUserDto): Promise<{ user: User; token: string }> {
+    const user = await this.usersService.validateCredentials(dto.email, dto.password);
+    if (!user) {
+      throw new UnauthorizedException('Credenciales inválidas');
+    }
+    const token = await this.generateJwt(user);
+    return { user, token };
   }
 }

@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException, BadRequestException, NotFound
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity.js';
+import { CreateUserDto } from '../auth/dto/create-user.dto.js';
 
 export interface CreateGoogleUserDto {
   googleId: string;
@@ -34,6 +35,31 @@ export class UsersService {
     }
   }
 
+  async register(dto: CreateUserDto): Promise<User> {
+    // verifica email único
+    const exists = await this.usersRepository.findOne({ where: { email: dto.email } });
+    if (exists) {
+      throw new BadRequestException('El email ya está registrado');
+    }
+    const salt = await import('bcrypt').then(m => m.genSalt(10));
+    const hash = await import('bcrypt').then(m => m.hash(dto.password, salt));
+    const user = this.usersRepository.create({
+      email: dto.email,
+      password: hash,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      picture: '',
+    });
+    return this.usersRepository.save(user);
+  }
+
+  async validateCredentials(email: string, plainPass: string): Promise<User | null> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user || !user.password) return null;
+    const bcrypt = await import('bcrypt');
+    const ok = await bcrypt.compare(plainPass, user.password);
+    return ok ? user : null;
+  }
   async findByEmail(email: string): Promise<User | null> {
     try {
       return await this.usersRepository.findOne({ where: { email } });
